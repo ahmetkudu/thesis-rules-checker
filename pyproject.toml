@@ -10,6 +10,8 @@ packages = [{include = "thesis_rules_checker"}]
 [tool.poetry.dependencies]
 python = "^3.10"
 pypdf2 = "^2.11.1"
+progress = "^1.6"
+pymupdf = "^1.21.0"
 
 
 [tool.poetry.group.test.dependencies]
