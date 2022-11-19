@@ -12,17 +12,8 @@ python = "^3.10"
 pypdf2 = "^2.11.1"
 progress = "^1.6"
 pymupdf = "^1.21.0"
-
-
-[tool.poetry.group.test.dependencies]
 pytest = "^7.2.0"
-
-
-[tool.poetry.group.dev.dependencies]
 autopep8 = "^2.0.0"
-
-
-[tool.poetry.group.web.dependencies]
 flask = "^2.2.2"
 
 [tool.poetry.scripts]
