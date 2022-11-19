@@ -1,0 +1,1 @@
+web: py -m flask --app thesis_rules_checker_web run
