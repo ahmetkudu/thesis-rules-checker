@@ -1,1 +1,1 @@
-web: py -m flask --app thesis_rules_checker_web run
+web: py3 -m flask --app thesis_rules_checker_web run
