@@ -21,6 +21,10 @@ pytest = "^7.2.0"
 [tool.poetry.group.dev.dependencies]
 autopep8 = "^2.0.0"
 
+
+[tool.poetry.group.web.dependencies]
+flask = "^2.2.2"
+
 [tool.poetry.scripts]
 thesis-rules-checker = "thesis_rules_checker.__main__:main"
 
