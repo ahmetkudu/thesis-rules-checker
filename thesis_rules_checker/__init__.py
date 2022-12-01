@@ -18,6 +18,7 @@ def process_document(document: fitz.Document):
         toc.append([2, 'Page %d' % (page_index + 1), page_index + 1])
 
         added_toc = False
+        first_line = True
 
         # Check font size for all text blocks
         for block in text_info["blocks"]:
@@ -25,6 +26,10 @@ def process_document(document: fitz.Document):
                 continue
             for line in block["lines"]:
                 for span in line["spans"]:
+                    if first_line and not span["text"].isupper():
+                        first_line = False
+                        add_rule_violation("Thesis title is not in all capital letters", span["bbox"], page, page_index, toc)
+                        added_toc = True
                     if not approximately_equals(span["size"], 12, 0.1):
                         add_rule_violation("Font size is not 12", span["bbox"], page, page_index, toc)
                         added_toc = True
