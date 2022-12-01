@@ -13,12 +13,14 @@ def get_output_filename(input_file: str) -> str:
 def process_document(document: fitz.Document):
     toc = document.get_toc()
     toc.append([1, 'Rule Violations', 1])
+
+    first_line = True
+
     for page_index, page in enumerate(document):
         text_info = page.get_text("dict")
         toc.append([2, 'Page %d' % (page_index + 1), page_index + 1])
 
         added_toc = False
-        first_line = True
 
         # Check font size for all text blocks
         for block in text_info["blocks"]:
