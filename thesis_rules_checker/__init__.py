@@ -1,57 +1,41 @@
 import fitz
 
+import thesis_rules_checker.rules
+import thesis_rules_checker.wrappers
+
 
 def get_output_filename(input_file: str) -> str:
-    parts = input_file.split(".")
-    if len(parts) >= 2:
-        parts[-2] += "-checked"
+    """
+    Appends "-checked" to the input file name.
+
+    Example:
+        get_output_filename("thesis.pdf") -> "thesis-checked.pdf"
+        get_output_filename("thesis") -> "thesis-checked"
+    """
+    if "." in input_file:
+        dot_index = input_file.rindex(".")
+        filename = input_file[:dot_index]
+        extension = input_file[dot_index:]
+        return f"{filename}-checked{extension}"
     else:
-        parts[0] += "-checked"
-    return ".".join(parts)
+        return f"{input_file}-checked"
 
 
-def process_document(document: fitz.Document):
-    toc = document.get_toc()
-    toc.append([1, 'Rule Violations', 1])
-
-    first_line = True
-
-    for page_index, page in enumerate(document):
-        text_info = page.get_text("dict")
-        toc.append([2, 'Page %d' % (page_index + 1), page_index + 1])
-
-        added_toc = False
-
-        # Check font size for all text blocks
-        for block in text_info["blocks"]:
-            if "lines" not in block:
-                continue
-            for line in block["lines"]:
-                for span in line["spans"]:
-                    if first_line and not span["text"].isupper():
-                        first_line = False
-                        add_rule_violation("Thesis title is not in all capital letters", span["bbox"], page, page_index, toc)
-                        added_toc = True
-                    if not approximately_equals(span["size"], 12, 0.1):
-                        add_rule_violation("Font size is not 12", span["bbox"], page, page_index, toc)
-                        added_toc = True
-
-        if not added_toc:
-            toc.pop()
-    document.set_toc(toc)
+all_rules: list[rules.Rule] = [
+    rules.ThesisTitleMustBeInAllCapsRule(),
+    rules.FontSizeMustBe12Rule(),
+]
 
 
-def add_rule_violation(message, bounding_box, page, page_index, toc):
-    x, y = bounding_box[0], bounding_box[1]
-    page\
-        .add_highlight_annot(bounding_box)\
-        .set_info(title="Rule Violation", content=message)
-    toc.append([3, message, page_index + 1,
-                {"kind": 1,
-                 "to": fitz.Point(x, y),
-                 "color": (1, 1, 0),
-                 "bold": True}])
+def process_document(document: fitz.Document) -> None:
+    """
+    Finds rule violations in the given document and annotates them.
+    """
+    violations = rules.Rule.apply_all(document, all_rules)
 
+    if not violations:
+        return
 
-def approximately_equals(a, b, epsilon=1e-5):
-    return abs(a - b) < epsilon
+    doc = wrappers.DocumentWrapper(document)
+    doc.annotate_rule_violations(violations)
+    doc.add_rule_violations_to_toc(violations)
