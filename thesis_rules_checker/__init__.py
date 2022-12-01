@@ -43,8 +43,9 @@ def process_document(document: fitz.Document):
 
 def add_rule_violation(message, bounding_box, page, page_index, toc):
     x, y = bounding_box[0], bounding_box[1]
-    page.add_highlight_annot(bounding_box)
-    page.add_text_annot((x - 20, y), message)
+    page\
+        .add_highlight_annot(bounding_box)\
+        .set_info(title="Rule Violation", content=message)
     toc.append([3, message, page_index + 1,
                 {"kind": 1,
                  "to": fitz.Point(x, y),
