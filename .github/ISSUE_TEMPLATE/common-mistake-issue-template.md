@@ -1,7 +1,7 @@
 ---
 name: Common Mistake Issue Template
 about: Describe this issue template's purpose here.
-title: "[Common Mistakes # - ]"
+title: "Common Mistakes # - "
 labels: coding, documentation
 assignees: Anxeal, ahmetkudu
 
