@@ -10,4 +10,4 @@ Institute of Graduate Studies in Science and Engineering has some rules for thes
 <img width="112" alt="" src="">|<img width="112" alt="Ekran Resmi 2022-03-14 21 58 02" src="https://user-images.githubusercontent.com/74921213/158241974-db472f6f-b07f-4578-ba48-bea27f1068c9.png">|<img width="112" alt="" src="">
 |:-:|:-:|:-:|
 Fatma Başak Aydemir|Ahmet Kudu|Alihan Çelikcan
-(advisor)| (developer) | (developer)
+(advisor)| (senior) | (senior)
