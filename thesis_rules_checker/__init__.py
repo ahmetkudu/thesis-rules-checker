@@ -24,6 +24,7 @@ def get_output_filename(input_file: str) -> str:
 all_rules: list[rules.Rule] = [
     rules.ThesisTitleMustBeInAllCapsRule(),
     rules.FontSizeMustBe12Rule(),
+    rules.FontFamilyMustBeTimesOrTimesNewRomanOrComputerModernRule(),
 ]
 
 
