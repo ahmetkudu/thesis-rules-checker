@@ -76,3 +76,34 @@ class DocumentWrapper:
         for violation in violations:
             self.toc.add_rule_violation(violation)
         self.toc.render()
+
+
+class SpanWrapper:
+    """
+    A wrapper for a span.
+    """
+
+    def __init__(self, span):
+        self.span = span
+
+    @property
+    def font(self):
+        return self.span["font"]
+
+    @property
+    def size(self):
+        return self.span["size"]
+
+    @property
+    def bounding_box(self):
+        return self.span["bbox"]
+
+    @property
+    def text(self):
+        return self.span["text"]
+
+    def __str__(self):
+        return self.text
+
+    def __repr__(self):
+        return self.text

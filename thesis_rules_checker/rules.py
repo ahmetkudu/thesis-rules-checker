@@ -7,6 +7,9 @@ from typing import Any
 
 import fitz
 
+from thesis_rules_checker.iterators import SpanIterator
+from thesis_rules_checker.wrappers import SpanWrapper
+
 
 class RuleSeverity(Enum):
     LOW = 1
@@ -76,15 +79,11 @@ class FontSizeMustBe12Rule(Rule):
 
     def apply(self, document: fitz.Document) -> list['RuleViolation']:
         violations = []
-        for page_index, page in enumerate(document):
-            text_info = page.get_text("dict")
-            for block in text_info["blocks"]:
-                if "lines" not in block:
-                    continue
-                for line in block["lines"]:
-                    for span in line["spans"]:
-                        if not math.isclose(span["size"], 12, rel_tol=0.1):
-                            violations.append(RuleViolation(self, page_index, span["bbox"]))
+        span_iterator = SpanIterator(document)
+        span: SpanWrapper
+        for span in span_iterator:
+            if not math.isclose(span.size, 12, rel_tol=0.1):
+                violations.append(RuleViolation(self, span_iterator.page_index, span.bounding_box, span.size))
         return violations
 
 
