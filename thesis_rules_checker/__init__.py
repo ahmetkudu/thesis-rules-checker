@@ -1,6 +1,7 @@
 import fitz
 
 import thesis_rules_checker.rules
+import thesis_rules_checker.rules_base
 import thesis_rules_checker.wrappers
 
 
@@ -21,7 +22,7 @@ def get_output_filename(input_file: str) -> str:
         return f"{input_file}-checked"
 
 
-all_rules: list[rules.Rule] = [
+all_rules: list[rules_base.Rule] = [
     rules.ThesisTitleMustBeInAllCapsRule(),
     rules.FontSizeMustBe12Rule(),
     rules.FontFamilyMustBeTimesOrTimesNewRomanOrComputerModernRule(),
@@ -32,7 +33,7 @@ def process_document(document: fitz.Document) -> None:
     """
     Finds rule violations in the given document and annotates them.
     """
-    violations = rules.Rule.apply_all(document, all_rules)
+    violations = rules_base.Rule.apply_all(document, all_rules)
 
     if not violations:
         return
