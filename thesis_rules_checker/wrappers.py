@@ -35,7 +35,7 @@ class TocWrapper:
     @staticmethod
     def __add_rule_violation_to_toc(toc, violation: rules.RuleViolation) -> None:
         x, y = violation.bounding_box[0], violation.bounding_box[1]
-        toc.append([3, violation.rule.description, violation.page_index + 1,
+        toc.append([3, str(violation), violation.page_index + 1,
                     {"kind": fitz.LINK_GOTO,
                      "to": fitz.Point(x, y),
                      "color": rules.severity_colors[violation.rule.severity],
@@ -65,7 +65,7 @@ class DocumentWrapper:
         page = self.document.load_page(violation.page_index)
         annotation = page.add_highlight_annot(violation.bounding_box)
         annotation.set_colors(stroke=lighten_color(rules.severity_colors[violation.rule.severity]))
-        annotation.set_info(title="Rule Violation", content=violation.rule.description)
+        annotation.set_info(title="Rule Violation", content=str(violation))
         annotation.update()
 
     def annotate_rule_violations(self, violations: list[rules.RuleViolation]) -> None:
