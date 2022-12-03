@@ -1,4 +1,5 @@
 import math
+from abc import abstractmethod, ABC
 from dataclasses import dataclass
 from enum import Enum
 from functools import reduce
@@ -21,7 +22,7 @@ severity_colors = {
 
 
 @dataclass
-class Rule:
+class Rule(ABC):
     """
     A rule for checking the format of a document.
     """
@@ -29,6 +30,7 @@ class Rule:
     description: str
     severity: RuleSeverity
 
+    @abstractmethod
     def apply(self: 'Rule', document: fitz.Document) -> list['RuleViolation']:
         """
         Applies the rule to the given document.
