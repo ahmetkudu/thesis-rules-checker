@@ -2,6 +2,7 @@ import math
 from dataclasses import dataclass
 from enum import Enum
 from functools import reduce
+from typing import Any
 
 import fitz
 
@@ -94,3 +95,15 @@ class RuleViolation:
     rule: Rule
     page_index: int
     bounding_box: list[float] = None
+    actual_value: Any = None
+
+    def __str__(self):
+        result = self.rule.description
+        if self.actual_value is not None:
+            result += f", got {self.format_value()} instead"
+        return result
+
+    def format_value(self):
+        if isinstance(self.actual_value, float):
+            return f"{self.actual_value:.2f}"
+        return self.actual_value
