@@ -26,6 +26,7 @@ all_rules: list[rules_base.Rule] = [
     rules.ThesisTitleMustBeInAllCapsRule(),
     rules.FontSizeMustBe12Rule(),
     rules.FontFamilyMustBeTimesOrTimesNewRomanOrComputerModernRule(),
+    rules.BoldFaceNotAllowedRule(),
 ]
 
 

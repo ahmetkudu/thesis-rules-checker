@@ -1,3 +1,5 @@
+import math
+
 from thesis_rules_checker.rules_base import *
 
 
@@ -99,6 +101,21 @@ class SpanWrapper:
     @property
     def text(self):
         return self.span["text"]
+
+    @property
+    def flags(self):
+        return self.span["flags"]
+
+    def is_centered(self, page_width: float) -> bool:
+        """
+        Returns True if the span is centered horizontally.
+        """
+        left_offset = page_width / 2 - self.bounding_box[0]
+        right_offset = self.bounding_box[2] - page_width / 2
+        return math.isclose(left_offset, right_offset, rel_tol=0.1)
+
+    def is_bold(self):
+        return self.flags & fitz.TEXT_FONT_BOLD
 
     def __str__(self):
         return self.text

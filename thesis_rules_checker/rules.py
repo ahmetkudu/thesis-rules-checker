@@ -86,3 +86,24 @@ class FontFamilyMustBeTimesOrTimesNewRomanOrComputerModernRule(Rule):
 
         return computer_modern_regex.match(lower_font_name) or lower_font_name in font_shapes
 
+
+class BoldFaceNotAllowedRule(Rule):
+    """
+    A rule that checks whether bold face is not used.
+    """
+
+    def __init__(self):
+        super().__init__(
+            description="Boldface is not allowed",
+            severity=RuleSeverity.HIGH)
+
+    def apply(self, document: fitz.Document) -> list['RuleViolation']:
+        violations = []
+        span_iterator = SpanIterator(document)
+        span: SpanWrapper
+        for span in span_iterator:
+            page = document[span_iterator.page_index]
+            page_bounds = page.rect
+            if not span.is_centered(page_bounds.width) and span.is_bold():
+                violations.append(RuleViolation(self, span_iterator.page_index, span.bounding_box))
+        return violations
