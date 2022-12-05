@@ -1,13 +1,63 @@
-<html>
+<html lang="en">
+
 <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Thesis Rules Checker</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"
+          integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"/>
 </head>
+
 <body>
-    <h1>Thesis Rules Checker</h1>
-    <p>Upload a thesis to check it against the rules.</p>
-    <form action="/check" method="post" enctype="multipart/form-data">
-        <input type="file" name="file" />
-        <input type="submit" value="Submit" />
-    </form>
+
+<div class="table-container is-half">
+    <table class="table is-half">
+        <tr>
+            <td>
+                <figure class="image is-128x128 my-4 mx-4">
+                    <img src="./static/bu_logo.jfif">
+                </figure>
+            </td>
+            <td>
+                <p class="subtitle is-italic py-3 my-3">
+                    Institute of Graduate Studies in Science and Engineering
+                </p>
+                <p class="subtitle is-italic">
+                    Boğaziçi University
+                </p>
+            </td>
+        </tr>
+    </table>
+</div>
+
+
+<p class="title has-text-centered py-3 my-8">Thesis Rules Checker</p>
+<p class="subtitle has-text-centered has-text-info">Upload a thesis to check it against the rules.</p>
+
+<form action="/check" method="post" enctype="multipart/form-data">
+    <div class="file is-info is-centered">
+        <label class="file-label">
+            <input class="file-input" type="file" name="file" onselect="7">
+            <span class="file-cta">
+                <span class="file-icon">
+                  <i class="fas fa-upload"></i>
+                </span>
+                <span class="file-label">
+                  Choose a pdf…
+                </span>
+            </span>
+            <span class="file-name" id="filename"></span>
+            <div class="buttons is-centered">
+                <button type="submit" class="button is-primary">Submit</button>
+            </div>
+
+        </label>
+    </div>
+</form>
+
 </body>
+
 </html>
