@@ -22,12 +22,7 @@ def get_output_filename(input_file: str) -> str:
         return f"{input_file}-checked"
 
 
-all_rules: list[rules_base.Rule] = [
-    rules.ThesisTitleMustBeInAllCapsRule(),
-    rules.FontSizeMustBe12Rule(),
-    rules.FontFamilyMustBeTimesOrTimesNewRomanOrComputerModernRule(),
-    rules.BoldFaceNotAllowedRule(),
-]
+all_rules: list[rules_base.Rule] = [rule_class() for rule_class in rules_base.Rule.__subclasses__()]
 
 
 def process_document(document: fitz.Document) -> None:
