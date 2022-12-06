@@ -107,3 +107,28 @@ class BoldFaceNotAllowedRule(rules_base.Rule):
             if span.is_bold() and not span.is_centered(document.bounds):
                 violations.append(rules_base.RuleViolation(self, span_iterator.page_index, span.bounding_box))
         return violations
+
+
+url_regex = re.compile(
+    r"https?://(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\."
+    r"[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()!@:%_+.~#?&/=]*)")
+
+
+class UrlNotAllowedOutsideReferencesRule(rules_base.Rule):
+    """
+    A rule that checks whether URLs are not used.
+    """
+
+    def __init__(self):
+        super().__init__(
+            description="URLs are not allowed outside references",
+            severity=rules_base.RuleSeverity.HIGH)
+
+    def apply(self, document: wrappers.DocumentWrapper) -> list['rules_base.RuleViolation']:
+        violations = []
+        span_iterator = iterators.SpanIterator(document)
+        span: wrappers.SpanWrapper
+        for span in span_iterator:
+            if url_regex.match(span.text):
+                violations.append(rules_base.RuleViolation(self, span_iterator.page_index, span.bounding_box))
+        return violations
