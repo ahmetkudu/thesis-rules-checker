@@ -34,11 +34,11 @@ def process_document(document: fitz.Document) -> None:
     """
     Finds rule violations in the given document and annotates them.
     """
-    violations = rules_base.Rule.apply_all(document, all_rules)
+    doc = wrappers.DocumentWrapper(document)
+    violations = rules_base.Rule.apply_all(doc, all_rules)
 
     if not violations:
         return
 
-    doc = wrappers.DocumentWrapper(document)
     doc.annotate_rule_violations(violations)
     doc.add_rule_violations_to_toc(violations)

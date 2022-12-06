@@ -3,12 +3,12 @@ import re
 
 import fitz
 
-from thesis_rules_checker.iterators import SpanIterator
-from thesis_rules_checker.rules_base import Rule, RuleViolation, RuleSeverity
-from thesis_rules_checker.wrappers import SpanWrapper
+from . import iterators
+from . import rules_base
+from . import wrappers
 
 
-class ThesisTitleMustBeInAllCapsRule(Rule):
+class ThesisTitleMustBeInAllCapsRule(rules_base.Rule):
     """
     A rule that checks whether the title of the thesis is in all caps.
     """
@@ -16,18 +16,18 @@ class ThesisTitleMustBeInAllCapsRule(Rule):
     def __init__(self):
         super().__init__(
             description="Thesis title must be in all caps",
-            severity=RuleSeverity.MEDIUM)
+            severity=rules_base.RuleSeverity.MEDIUM)
 
-    def apply(self, document: fitz.Document) -> list['RuleViolation']:
-        first_page: fitz.Page = document.load_page(0)
+    def apply(self, document: wrappers.DocumentWrapper) -> list['rules_base.RuleViolation']:
+        first_page: fitz.Page = document[0]
         text_dict = first_page.get_text("dict")
         first_line = text_dict["blocks"][0]["lines"][0]["spans"][0]
         if not first_line["text"].isupper():
-            return [RuleViolation(self, 0, first_line["bbox"])]
+            return [rules_base.RuleViolation(self, 0, first_line["bbox"])]
         return []
 
 
-class FontSizeMustBe12Rule(Rule):
+class FontSizeMustBe12Rule(rules_base.Rule):
     """
     A rule that checks whether the font size is 12.
     """
@@ -35,15 +35,16 @@ class FontSizeMustBe12Rule(Rule):
     def __init__(self):
         super().__init__(
             description="Font size must be 12",
-            severity=RuleSeverity.HIGH)
+            severity=rules_base.RuleSeverity.HIGH)
 
-    def apply(self, document: fitz.Document) -> list['RuleViolation']:
+    def apply(self, document: wrappers.DocumentWrapper) -> list['rules_base.RuleViolation']:
         violations = []
-        span_iterator = SpanIterator(document)
-        span: SpanWrapper
+        span_iterator = iterators.SpanIterator(document)
+        span: wrappers.SpanWrapper
         for span in span_iterator:
-            if not math.isclose(span.size, 12, rel_tol=0.1):
-                violations.append(RuleViolation(self, span_iterator.page_index, span.bounding_box, span.size))
+            if not math.isclose(span.size, 12, rel_tol=0.1) and not span.is_centered(document.bounds):
+                violations.append(
+                    rules_base.RuleViolation(self, span_iterator.page_index, span.bounding_box, span.size))
         return violations
 
 
@@ -52,7 +53,7 @@ computer_modern_regex = re.compile(
     "^(sf|ec|tc|la|lb|lc|rx)(rm|sl|ti|cc|ui|sc|ci|bx|bl|bi|xc|oc|rb|bm|ss|si|sx|so|tt|st|it|tc)[0-9]{4}$")
 
 
-class FontFamilyMustBeTimesOrTimesNewRomanOrComputerModernRule(Rule):
+class FontFamilyMustBeTimesOrTimesNewRomanOrComputerModernRule(rules_base.Rule):
     """
     A rule that checks whether the font family is Times, Times New Roman or Computer Modern.
     """
@@ -60,15 +61,16 @@ class FontFamilyMustBeTimesOrTimesNewRomanOrComputerModernRule(Rule):
     def __init__(self):
         super().__init__(
             description="Font family must be Times, Times New Roman or Computer Modern",
-            severity=RuleSeverity.HIGH)
+            severity=rules_base.RuleSeverity.HIGH)
 
-    def apply(self, document: fitz.Document) -> list['RuleViolation']:
+    def apply(self, document: wrappers.DocumentWrapper) -> list['rules_base.RuleViolation']:
         violations = []
-        span_iterator = SpanIterator(document)
-        span: SpanWrapper
+        span_iterator = iterators.SpanIterator(document)
+        span: wrappers.SpanWrapper
         for span in span_iterator:
             if span.text not in ["Times", "Times New Roman"] and not self.__is_computer_modern(span.font):
-                violations.append(RuleViolation(self, span_iterator.page_index, span.bounding_box, span.font))
+                violations.append(
+                    rules_base.RuleViolation(self, span_iterator.page_index, span.bounding_box, span.font))
         return violations
 
     @staticmethod
@@ -87,7 +89,7 @@ class FontFamilyMustBeTimesOrTimesNewRomanOrComputerModernRule(Rule):
         return computer_modern_regex.match(lower_font_name) or lower_font_name in font_shapes
 
 
-class BoldFaceNotAllowedRule(Rule):
+class BoldFaceNotAllowedRule(rules_base.Rule):
     """
     A rule that checks whether bold face is not used.
     """
@@ -95,15 +97,13 @@ class BoldFaceNotAllowedRule(Rule):
     def __init__(self):
         super().__init__(
             description="Boldface is not allowed",
-            severity=RuleSeverity.HIGH)
+            severity=rules_base.RuleSeverity.HIGH)
 
-    def apply(self, document: fitz.Document) -> list['RuleViolation']:
+    def apply(self, document: wrappers.DocumentWrapper) -> list['rules_base.RuleViolation']:
         violations = []
-        span_iterator = SpanIterator(document)
-        span: SpanWrapper
+        span_iterator = iterators.SpanIterator(document)
+        span: wrappers.SpanWrapper
         for span in span_iterator:
-            page = document[span_iterator.page_index]
-            page_bounds = page.rect
-            if not span.is_centered(page_bounds.width) and span.is_bold():
-                violations.append(RuleViolation(self, span_iterator.page_index, span.bounding_box))
+            if span.is_bold() and not span.is_centered(document.bounds):
+                violations.append(rules_base.RuleViolation(self, span_iterator.page_index, span.bounding_box))
         return violations

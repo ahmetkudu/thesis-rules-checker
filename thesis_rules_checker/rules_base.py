@@ -4,7 +4,7 @@ from enum import Enum
 from functools import reduce
 from typing import Any
 
-import fitz
+from . import wrappers
 
 
 class RuleSeverity(Enum):
@@ -30,14 +30,14 @@ class Rule(ABC):
     severity: RuleSeverity
 
     @abstractmethod
-    def apply(self: 'Rule', document: fitz.Document) -> list['RuleViolation']:
+    def apply(self: 'Rule', document: 'wrappers.DocumentWrapper') -> list['RuleViolation']:
         """
         Applies the rule to the given document.
         """
         raise NotImplementedError()
 
     @staticmethod
-    def apply_all(document: fitz.Document, rules: list['Rule']) -> list['RuleViolation']:
+    def apply_all(document: 'wrappers.DocumentWrapper', rules: list['Rule']) -> list['RuleViolation']:
         """
         Applies all rules to the given document.
         """
