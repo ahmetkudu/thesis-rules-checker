@@ -17,6 +17,7 @@ class SpanIterator(Iterator):
 
     def _generator(self) -> Iterator[wrappers.SpanWrapper]:
         for page_index, page in enumerate(self.document):
+            self.page = page
             self.page_index = page_index
             text_info = page.get_text("dict")
             for block in text_info["blocks"]:

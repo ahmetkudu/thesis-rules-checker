@@ -132,3 +132,38 @@ class UrlNotAllowedOutsideReferencesRule(rules_base.Rule):
             if url_regex.match(span.text):
                 violations.append(rules_base.RuleViolation(self, span_iterator.page_index, span.bounding_box))
         return violations
+
+
+class TextMustBeWithinMarginsRule(rules_base.Rule):
+    """
+    A rule that checks whether the text is in the margins.
+    """
+
+    def __init__(self):
+        super().__init__(
+            description="Text must be within margins",
+            severity=rules_base.RuleSeverity.HIGH)
+
+    def apply(self, document: wrappers.DocumentWrapper) -> list['rules_base.RuleViolation']:
+        violations = []
+        span_iterator = iterators.SpanIterator(document)
+        span: wrappers.SpanWrapper
+        for span in span_iterator:
+            if not self.__is_in_margins(span.bounding_box, span_iterator.page.rect):
+                violations.append(rules_base.RuleViolation(self, span_iterator.page_index, span.bounding_box))
+        return violations
+
+    @staticmethod
+    def __is_in_margins(bounding_box, page_rect):
+        # Find the ratio
+        # A4 paper size is 21 x 29.7 cm
+        ratio = page_rect.width / 21
+
+        # Margins for the text shall be 3.5 cm from the top, 2 cm from the right, 2 cm from the bottom, and 3.5 cm
+        # from the left
+
+        return \
+            bounding_box[0] >= 3.5 * ratio and \
+            bounding_box[1] >= 3.5 * ratio and \
+            bounding_box[2] <= page_rect.width - 2 * ratio and \
+            bounding_box[3] <= page_rect.height - 2 * ratio
